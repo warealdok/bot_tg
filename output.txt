@@ -1,0 +1,8 @@
+curl -v \
+ -X 'POST' \
+ -H 'Content-Type: text/xml; charset="utf-8"' \
+ -H 'Connection: close' \
+ -H 'SOAPAction: "urn:schemas-upnp-org:services:LANIPConnections:1
+ #AddPortMapping"' \
+ --data @SOAP_NAT.xml \
+ "http://192.168.0.1:52869/upnp/control/LANIPConnection"
