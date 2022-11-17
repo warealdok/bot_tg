@@ -7,6 +7,8 @@
 // 2 - найти id поста с самым маленьким количеством слов в тайтле
 // 3 - посчитать суммарное количество букв во всех боди всех постов
 
+use std::vec;
+
 use teloxide::prelude::*;
 use reqwest;
 use serde::{Deserialize, Serialize};
@@ -26,7 +28,7 @@ async fn main() {
 
 }
 // Функция обращения к json'у
-async fn json_call()  -> Result<(), reqwest::Error> {
+async fn json_call(some_var: &mut (usize, (Vec<usize>, Vec<usize>)))  -> Result<(), reqwest::Error> {
 
     let mut lowest_title_vec = Vec::new();
     let mut temp_vec = Vec::new();
@@ -44,7 +46,7 @@ async fn json_call()  -> Result<(), reqwest::Error> {
             lowest_title_vec.push(word_counter(&post.title));
         }
         
-json_calc(&temp_vec, &lowest_title_vec);
+*some_var = json_calc(&temp_vec, &lowest_title_vec);
 
     Ok(())
 }
@@ -63,22 +65,22 @@ fn json_calc(temp_vec: &Vec<usize>, lowest_title_vec: &Vec<usize>) -> (usize, (V
 
     let output = compare_vec(&temp_vec, highest_value, index_of_high_vec, &lowest_title_vec, lowest_value, index_of_low_vec);
 
-    print!("Id поста с самым длинным боди по количеству букв: ");
-    for i in 0..output.0.len() {
-        print!("{}", output.0[i]);
-        if output.0.len() != 1 {
-        print!(", ");
-        }
+    // print!("Id поста с самым длинным боди по количеству букв: ");
+    // for i in 0..output.0.len() {
+    //     print!("{}", output.0[i]);
+    //     if output.0.len() != 1 {
+    //     print!(", ");
+    //     }
         
-    }
-    print!("\nId поста с самым маленьким количеством слов в тайтле: ");
-    for i in 0..output.1.len() {
-        print!("{}", output.1[i]);
-        if i < output.1.len() - 1 {
-        print!(", ");
-        }
-    }
-    println!("\nСумма всех боди всех постов: {}", sum_of_all_body);
+    // }
+    // print!("\nId поста с самым маленьким количеством слов в тайтле: ");
+    // for i in 0..output.1.len() {
+    //     print!("{}", output.1[i]);
+    //     if i < output.1.len() - 1 {
+    //     print!(", ");
+    //     }
+    // }
+    // println!("\nСумма всех боди всех постов: {}", sum_of_all_body);
     return (sum_of_all_body, output)
 
 
@@ -147,9 +149,13 @@ async fn bot_tg() {
 
 
     teloxide::repl(bot, |bot: Bot, msg: Message| async move {
-        // let test_var = ;
-        json_call().await.unwrap();
-        bot.send_message(msg.chat.id, "Лол").await?;
+        let test_var = &mut (11 as usize, (vec![] as Vec<usize>, vec![] as Vec<usize>));
+        json_call(test_var).await.unwrap();
+        let long_string = test_var.0.to_string();
+        let borrowed_string: &str = "world";
+        let new_owned_string = long_string + borrowed_string;
+
+        bot.send_message(msg.chat.id, new_owned_string).await?;
         Ok(())
     })
     .await;
