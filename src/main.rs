@@ -7,14 +7,19 @@
 // 2 - найти id поста с самым маленьким количеством слов в тайтле
 // 3 - посчитать суммарное количество букв во всех боди всех постов
 
-use std::vec;
+use std::{vec};
 
-use teloxide::prelude::*;
+use teloxide::{prelude::*, utils::command::BotCommands};
+
+
 use reqwest;
 use serde::{Deserialize, Serialize};
 
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+
+
 struct Posts {
     user_id: i32,
     id: i32,
@@ -141,22 +146,46 @@ fn compare_vec(temp_vec: &Vec<usize>, highest_value: &usize, mut index_of_high_v
 // println!("{:#?}", output.1.1);
 // }
 // Функционал бота
+#[derive(BotCommands, Clone)]
+#[command(rename_rule = "lowercase", description = "These commands are supported:")]
+enum Command {
+    #[command(description = "Список доступных команд.")]
+    Help,
+    #[command(description = "Выводит фа диез.")]
+    Fadies(String),
+}
+
 async fn bot_tg() {
     pretty_env_logger::init();
-    log::info!("Starting throw dice bot...");
+    log::info!("Starting command bot...");
 
     let bot = Bot::from_env();
 
+    Command::repl(bot, answer).await;
 
-    teloxide::repl(bot, |bot: Bot, msg: Message| async move {
-        let test_var = &mut (11 as usize, (vec![] as Vec<usize>, vec![] as Vec<usize>));
-        json_call(test_var).await.unwrap();
-        let long_string = test_var.0.to_string();
-        let borrowed_string: &str = "world2";
-        let new_owned_string = long_string + borrowed_string;
+}
 
-        bot.send_message(msg.chat.id, new_owned_string).await?;
-        Ok(())
-    })
-    .await;
+async fn answer(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
+    let mut test_var = (0 as usize, (vec![] as Vec<usize>, vec![] as Vec<usize>));
+    json_call(&mut test_var).await.unwrap();
+    let mut string_vec_0: Vec<String> = Vec::new();
+    let mut string_vec_1: Vec<String> = Vec::new();
+    for i in 0..test_var.1.0.len() {
+        string_vec_0.push(test_var.1.0[i].to_string())
+    }
+    for i in 0..test_var.1.1.len() {
+        string_vec_1.push(test_var.1.1[i].to_string())
+    }
+    let first_line = "Id поста с самым длинным боди по количеству букв: ".to_string() + &string_vec_0.join(", ") + "\n";
+    let second_line = "Id поста с самым маленьким количеством слов в тайтле: ".to_string() + &string_vec_1.join(", ") + "\n";
+    let third_line = "Сумма всех боди всех постов: ".to_string() + &test_var.0.to_string() + "\n";
+    let bot_output = first_line + &second_line + &third_line;
+    match cmd {
+        Command::Help => bot.send_message(msg.chat.id, Command::descriptions().to_string()).await?,
+        Command::Fadies(_) => {
+            bot.send_message(msg.chat.id, bot_output).await?
+        }
+    };
+
+    Ok(())
 }
