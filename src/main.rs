@@ -8,17 +8,12 @@
 // 3 - посчитать суммарное количество букв во всех боди всех постов
 
 use std::{vec};
-
 use teloxide::{prelude::*, utils::command::BotCommands};
-
-
 use reqwest;
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-
 
 struct Posts {
     user_id: i32,
@@ -70,22 +65,6 @@ fn json_calc(temp_vec: &Vec<usize>, lowest_title_vec: &Vec<usize>) -> (usize, (V
 
     let output = compare_vec(&temp_vec, highest_value, index_of_high_vec, &lowest_title_vec, lowest_value, index_of_low_vec);
 
-    // print!("Id поста с самым длинным боди по количеству букв: ");
-    // for i in 0..output.0.len() {
-    //     print!("{}", output.0[i]);
-    //     if output.0.len() != 1 {
-    //     print!(", ");
-    //     }
-        
-    // }
-    // print!("\nId поста с самым маленьким количеством слов в тайтле: ");
-    // for i in 0..output.1.len() {
-    //     print!("{}", output.1[i]);
-    //     if i < output.1.len() - 1 {
-    //     print!(", ");
-    //     }
-    // }
-    // println!("\nСумма всех боди всех постов: {}", sum_of_all_body);
     return (sum_of_all_body, output)
 
 
@@ -140,11 +119,6 @@ fn compare_vec(temp_vec: &Vec<usize>, highest_value: &usize, mut index_of_high_v
     return (index_of_high_vec, index_of_low_vec)
 
 }
-// fn some_numbers(output: (usize, (Vec<usize>, Vec<usize>))) {
-// println!("{:#?}", output.0);
-// println!("{:#?}", output.1.0);
-// println!("{:#?}", output.1.1);
-// }
 // Функционал бота
 #[derive(BotCommands, Clone)]
 #[command(rename_rule = "lowercase", description = "These commands are supported:")]
@@ -164,7 +138,6 @@ async fn bot_tg() {
     Command::repl(bot, answer).await;
 
 }
-
 async fn answer(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     let mut test_var = (0 as usize, (vec![] as Vec<usize>, vec![] as Vec<usize>));
     json_call(&mut test_var).await.unwrap();
