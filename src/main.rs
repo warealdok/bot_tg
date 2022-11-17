@@ -152,7 +152,7 @@ async fn bot_tg() {
         let test_var = &mut (11 as usize, (vec![] as Vec<usize>, vec![] as Vec<usize>));
         json_call(test_var).await.unwrap();
         let long_string = test_var.0.to_string();
-        let borrowed_string: &str = "world";
+        let borrowed_string: &str = "world2";
         let new_owned_string = long_string + borrowed_string;
 
         bot.send_message(msg.chat.id, new_owned_string).await?;
